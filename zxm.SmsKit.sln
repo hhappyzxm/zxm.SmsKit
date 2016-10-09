@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5EDDD32F-478F-4898-8AA0-45ABC2E81347}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8DAD25A2-9457-4266-823E-601713BADF40}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.SmsKit", "src\zxm.SmsKit\zxm.SmsKit.xproj", "{D01FF4F2-71B6-4CEC-BE9B-A10793CCF84A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C284498D-4204-40C2-81BB-0ABD7EB233B7}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "zxm.SmsKit.Tests", "test\zxm.SmsKit.Tests\zxm.SmsKit.Tests.xproj", "{3324515B-22AB-4BD3-929B-1465967DA741}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D01FF4F2-71B6-4CEC-BE9B-A10793CCF84A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D01FF4F2-71B6-4CEC-BE9B-A10793CCF84A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D01FF4F2-71B6-4CEC-BE9B-A10793CCF84A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D01FF4F2-71B6-4CEC-BE9B-A10793CCF84A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3324515B-22AB-4BD3-929B-1465967DA741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3324515B-22AB-4BD3-929B-1465967DA741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3324515B-22AB-4BD3-929B-1465967DA741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3324515B-22AB-4BD3-929B-1465967DA741}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D01FF4F2-71B6-4CEC-BE9B-A10793CCF84A} = {5EDDD32F-478F-4898-8AA0-45ABC2E81347}
+		{3324515B-22AB-4BD3-929B-1465967DA741} = {C284498D-4204-40C2-81BB-0ABD7EB233B7}
+	EndGlobalSection
+EndGlobal
