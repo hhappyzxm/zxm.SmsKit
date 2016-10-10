@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using zxm.SmsKit.Data;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace zxm.SmsKit
 {
@@ -44,66 +45,34 @@ namespace zxm.SmsKit
                         to = request.PhoneNumbers
                     });
 
-                var responseMessage = await client.SendAsync(GetHttpRequestMessage(SendMessageURL, HttpMethod.Post, new StringContent(requestJson)));
+                try
+                {
+                    var response = await client.SendAsync(GetHttpRequestMessage(SendMessageURL, HttpMethod.Post, new StringContent(requestJson)));
+
+                    if (response.StatusCode != HttpStatusCode.Accepted && response.StatusCode != HttpStatusCode.OK)
+                        throw new SmsKitException($"Request failed. Received HTTP {response.StatusCode}");
+
+                    var result = await response.Content.ReadAsStringAsync();
+                    var resultObject = JsonConvert.DeserializeObject<Data.Json.MessageResponse.Rootobject>(result);
+
+                    var jsonMessages = resultObject.data.message.Select(message => new Message
+                    {
+                        APIMessageID = message.apiMessageId,
+                        To = message.to
+                    }).ToArray();
+
+                    return new SendMessageResponse
+                    {
+                        Result = result,
+                        Success = true,
+                        Messages = jsonMessages
+                    };
+                }
+                catch (Exception ex)
+                {
+                    throw new SmsKitException($"Request failed. {ex.Message}");
+                }
             }
-            //try
-            //{
-            //    client = GetHttpClient();
-
-            //    await client.PostAsync(SendMessageURL,);
-            //    //Gets the WebRequest with the SendMessageURL and POST method 
-            //    var webRequest = GetWebRequest(Properties.RESTSettings.Default.SendMessageURL, Properties.RESTSettings.Default.PostMethod);
-
-            //    //Creates a JSON object with the message,telephone numbers applied and serialize it to be sent to the Clickatell service
-            //    var postData = JsonSerializer<Data.JSON.REST.MessageRequest.Rootobject>(
-            //        new Data.JSON.REST.MessageRequest.Rootobject
-            //        {
-            //            text = request.Message,
-            //            to = request.PhoneNumbers
-            //        });
-
-            //    //Gets the encoding of the JSON post data created (iso-8859-1)
-            //    var bytes = Encoding.GetEncoding(Properties.RESTSettings.Default.EncodingName).GetBytes(postData);
-            //    webRequest.ContentLength = bytes.Length;
-
-            //    //Get webRequest Requested stream from encoded bytes
-            //    using (var writeStream = webRequest.GetRequestStream())
-            //    {
-            //        writeStream.Write(bytes, 0, bytes.Length);
-            //    }
-
-            //    //Get WebResponse from Clickatell service
-            //    var webResponse = GetWebResponse(webRequest);
-
-            //    //Deserlialize the webResponse in JSON and maps the results for the Messages response
-            //    var jsonMessages = JsonDeserialize<Data.JSON.REST.MessageResponse.Rootobject>(webResponse.Result).data.message.Select(message => new Message
-            //    {
-            //        APIMessageID = message.apiMessageId,
-            //        To = message.to
-            //    }).ToArray();
-
-            //    return new SendMessageResponse
-            //    {
-            //        Result = webResponse.Result,
-            //        Success = webResponse.Success,
-            //        Messages = jsonMessages
-            //    };
-            //}
-            //catch (Exception exception)
-            //{
-            //    return new SendMessageResponse
-            //    {
-            //        Result = string.Format("Error occured during Clickatell {0}. Details: {1}", MethodBase.GetCurrentMethod().Name, exception.Message),
-            //        Success = false
-            //    };
-            //}
-            //finally
-            //{
-            //    if(client != null)
-            //    {
-            //        client.Dispose();
-            //    }
-            //}
         }
 
         #endregion
@@ -118,46 +87,16 @@ namespace zxm.SmsKit
             request.Headers.Add("X-Version", "1");
             request.Headers.Add("ContentType", "application/json");
             request.Headers.Add("Accept", "application/json");
-
+            
             request.RequestUri = new Uri(url);
             request.Method = method;
+
+            content.Headers.ContentType.MediaType = "application/json";
             request.Content = content;
 
             return request;
         }
-
-        //private WebResponse GetWebResponse(HttpWebRequest webRequest)
-        //{
-        //    //Gets the WebResponse from Clickatell service
-        //    using (var response = (HttpWebResponse)webRequest.GetResponse())
-        //    {
-        //        using (var responseStream = response.GetResponseStream())
-        //        {
-        //            if (responseStream != null)
-        //            {
-        //                using (var reader = new StreamReader(responseStream))
-        //                {
-        //                    //Validate StatusCode returned from Clickatell service
-        //                    if (response.StatusCode != HttpStatusCode.Accepted && response.StatusCode != HttpStatusCode.OK)
-        //                        throw new Exception(String.Format("Request failed. Received HTTP {0}", response.StatusCode));
-
-        //                    return new Data.WebResponse
-        //                    {
-        //                        Result = reader.ReadToEnd(),
-        //                        Success = true,
-        //                        StatusCode = response.StatusCode
-        //                    };
-        //                }
-        //            }
-        //            return new Data.WebResponse
-        //            {
-        //                Result = string.Empty,
-        //                Success = false,
-        //            };
-        //        }
-        //    }
-        //}
-
+        
         #endregion
     }
 }
